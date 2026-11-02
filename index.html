@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Kavach</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+</head><body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><b>KAVACH</b><span>Personal safety alert</span></div>
+    <div class="chip" id="status" data-s="idle"><i></i><span id="status-t">Standing by</span></div>
+  </header>
+
+  <main>
+    <section id="v-alert" class="view" aria-labelledby="h-alert">
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <h2 id="h-alert">Alarm</h2>
+        <p class="muted" id="a-status">Hold the red button for a second and a half. A quick tap does nothing, so it will not go off in your bag.</p>
+      </div>
+
+      <div class="sos-wrap">
+        <div class="sos">
+          <svg viewBox="0 0 232 232" aria-hidden="true">
+            <circle cx="116" cy="116" r="108" fill="none" stroke="var(--line)" stroke-width="6"></circle>
+            <circle id="sos-ring" cx="116" cy="116" r="108" fill="none" stroke="var(--alarm)" stroke-width="6" stroke-linecap="round" stroke-dasharray="678.58" stroke-dashoffset="678.58"></circle>
+          </svg>
+          <button type="button" id="sos" aria-label="SOS. Press and hold for one and a half seconds to sound the alarm."><b>SOS</b><small>HOLD</small></button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="where">Where I am right now</label>
+        <input id="where" type="text" maxlength="160" autocomplete="off" placeholder="Gate 2 of the metro station, near the chai stall">
+        <p class="hint">Update it as you move. It goes into the alert message. Sharing live location from your maps app is faster when you can.</p>
+      </div>
+
+      <div class="card" id="alert-to"></div>
+
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <h3>Emergency numbers, India</h3>
+        <div class="nums" id="nums"></div>
+        <p class="hint">Tap a number to dial where your device allows it.</p>
+      </div>
+    </section>
+
+    <section id="v-walk" class="view" aria-labelledby="h-walk" hidden>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <h2 id="h-walk">Safe walk</h2>
+        <p class="muted">Set a timer for your trip. If it runs out and you have not checked in, you get a 60 second warning, then the alarm goes off.</p>
+      </div>
+
+      <div class="card" id="w-setup">
+        <div class="field">
+          <label for="walk-dest">Going to</label>
+          <input id="walk-dest" type="text" maxlength="100" autocomplete="off" placeholder="Home, hostel gate 3, office parking">
+        </div>
+        <div class="field">
+          <label for="walk-min">Minutes</label>
+          <input id="walk-min" type="number" inputmode="numeric" min="1" max="240" value="20">
+          <div class="chips" id="walk-chips" style="margin-top:10px"></div>
+        </div>
+        <button type="button" class="btn primary" id="walk-start">Start safe walk</button>
+        <p class="hint">The timer only runs while this page stays open. Keep it open and keep the screen on if you can.</p>
+      </div>
+
+      <div class="card" id="w-run" hidden>
+        <h3 id="w-dest">Walk in progress</h3>
+        <div class="count" id="w-count" role="timer" aria-label="Time left">00:00</div>
+        <div class="bar"><i id="w-bar"></i></div>
+        <div class="row">
+          <button type="button" class="btn primary" id="w-arrived">I have arrived safely</button>
+          <button type="button" class="btn" id="w-extend">Add 10 minutes</button>
+        </div>
+      </div>
+
+      <div class="card warn" id="w-grace" hidden>
+        <h3>Time is up. Are you safe?</h3>
+        <p>The alarm goes off in</p>
+        <div class="count" id="g-count">01:00</div>
+        <div class="row">
+          <button type="button" class="btn primary" id="g-safe">I am safe</button>
+          <button type="button" class="btn" id="g-extend">Add 10 minutes</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="v-call" class="view" aria-labelledby="h-call" hidden>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <h2 id="h-call">Fake call</h2>
+        <p class="muted">A full-screen incoming call with a ringtone, for when you need a reason to leave a conversation or a place.</p>
+      </div>
+
+      <div class="card" id="fc-form">
+        <div class="field">
+          <label for="fc-name">Caller name</label>
+          <input id="fc-name" type="text" maxlength="40" autocomplete="off" value="Mom">
+        </div>
+        <div class="field">
+          <label for="fc-delay">Ring after</label>
+          <select id="fc-delay">
+            <option value="0">Right now</option>
+            <option value="10" selected>10 seconds</option>
+            <option value="30">30 seconds</option>
+            <option value="60">1 minute</option>
+            <option value="300">5 minutes</option>
+          </select>
+        </div>
+        <button type="button" class="btn primary" id="fc-start">Start fake call</button>
+        <p class="hint">Turn the volume up. The ringtone plays only after you have touched this page.</p>
+      </div>
+
+      <div class="card" id="fc-wait" hidden>
+        <h3>Call is coming</h3>
+        <p id="fc-wait-t" class="mono">Rings in 10 s</p>
+        <button type="button" class="btn" id="fc-cancel">Cancel</button>
+      </div>
+    </section>
+
+    <section id="v-plan" class="view" aria-labelledby="h-plan" hidden>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <h2 id="h-plan">My plan</h2>
+        <p class="muted">Everything here stays in this browser on this device. Nothing is sent anywhere.</p>
+      </div>
+
+      <div class="card">
+        <h3>About me</h3>
+        <div class="field">
+          <label for="p-name">Name</label>
+          <input id="p-name" type="text" maxlength="60" autocomplete="name">
+        </div>
+        <div class="field">
+          <label for="p-blood">Blood group</label>
+          <select id="p-blood">
+            <option value="">Not set</option>
+            <option>A+</option><option>A-</option><option>B+</option><option>B-</option>
+            <option>AB+</option><option>AB-</option><option>O+</option><option>O-</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="p-notes">Medical notes</label>
+          <textarea id="p-notes" maxlength="300" placeholder="Allergies, conditions, medicines you take. Optional."></textarea>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Trusted contacts</h3>
+        <ul class="clist" id="contact-list"></ul>
+        <form id="contact-form" class="row" novalidate style="align-items:flex-end">
+          <div class="field" style="flex:1 1 150px">
+            <label for="c-name">Name</label>
+            <input id="c-name" type="text" maxlength="40" autocomplete="off">
+          </div>
+          <div class="field" style="flex:1 1 150px">
+            <label for="c-phone">Phone</label>
+            <input id="c-phone" type="tel" inputmode="tel" maxlength="20" autocomplete="off" placeholder="98765 43210">
+          </div>
+          <button type="submit" class="btn primary" id="add-contact" style="flex:1 1 100%">Add contact</button>
+        </form>
+        <p class="err" id="contact-err" role="alert" hidden></p>
+        <p class="hint">Up to five people. Ten-digit Indian mobile numbers get +91 added.</p>
+      </div>
+
+      <div class="card">
+        <h3>Alert message preview</h3>
+        <pre class="preview" id="preview"></pre>
+        <button type="button" class="btn" id="copy-preview">Copy message</button>
+      </div>
+
+      <div class="card">
+        <h3>Tools</h3>
+        <div class="row">
+          <button type="button" class="btn" id="test-siren">Test siren (2 seconds, loud)</button>
+          <button type="button" class="btn" id="erase">Erase my saved data</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>What this page cannot do</h3>
+        <ul class="limits">
+          <li>It cannot read your GPS, so you type where you are.</li>
+          <li>It cannot send a text or place a call by itself. When the alarm goes off it gives you a ready message and call buttons.</li>
+          <li>Call and text buttons may do nothing in some apps. Every number is also shown so you can dial it yourself.</li>
+          <li>The timer, siren and flashing stop if the page is closed or the phone locks.</li>
+        </ul>
+        <p><b>In danger, call 112 first.</b></p>
+      </div>
+    </section>
+  </main>
+</div>
+
+<nav class="tabs" aria-label="Sections">
+  <div>
+    <a href="#alert" id="t-alert"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></svg>Alarm</a>
+    <a href="#walk" id="t-walk"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Walk</a>
+    <a href="#call" id="t-call"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 005 5L15 13l5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2z"/></svg>Call</a>
+    <a href="#plan" id="t-plan"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h10"/></svg>Plan</a>
+  </div>
+</nav>
+
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<div class="alarm" id="alarm" role="alertdialog" aria-modal="true" aria-labelledby="al-h" hidden>
+  <div class="in">
+    <div class="el" id="al-elapsed">00:00 since the alarm started</div>
+    <h1 id="al-h" tabindex="-1">Alarm on. Reach help now.</h1>
+    <p class="ov-note" id="al-reason"></p>
+    <a class="ov-btn" href="tel:112" id="al-112">Call 112</a>
+
+    <div class="ov-card">
+      <b>Alert message</b>
+      <textarea id="al-msg" readonly aria-label="Alert message"></textarea>
+      <button type="button" class="ov-btn" id="al-copy" style="font-size:20px;min-height:52px">Copy message</button>
+    </div>
+
+    <div class="ov-card">
+      <b>Trusted contacts</b>
+      <div id="al-contacts" style="display:flex;flex-direction:column;gap:10px"></div>
+    </div>
+
+    <p class="ov-note">This page cannot send messages by itself. If a button does nothing, copy the message and dial the number yourself.</p>
+    <p class="ov-note" id="al-sirennote" hidden>The siren could not start on this device.</p>
+    <button type="button" class="ov-btn ghost" id="al-siren">Siren on. Tap to mute</button>
+    <button type="button" class="ov-btn ghost" id="al-end">I am safe. End alarm</button>
+  </div>
+</div>
+
+<div class="callui" id="callui" role="dialog" aria-modal="true" aria-label="Incoming call" hidden>
+  <div class="who">
+    <div class="av" id="cu-av">M</div>
+    <div class="nm" id="cu-name">Mom</div>
+    <div class="st" id="cu-st">Incoming call</div>
+  </div>
+  <div class="acts" id="cu-acts">
+    <div class="act"><button type="button" class="round no" id="cu-decline">Decline</button></div>
+    <div class="act"><button type="button" class="round yes" id="cu-accept">Accept</button></div>
+  </div>
+  <div class="acts" id="cu-end" hidden>
+    <div class="act"><button type="button" class="round no" id="cu-endbtn">End</button></div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+
+</body></html>
